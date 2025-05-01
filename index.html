@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Shree Budhuk Secondary School - Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="assets/css/style.css" rel="stylesheet" />
+</head>
+<body class="bg-light">
+    <div class="container d-flex align-items-center justify-content-center vh-100">
+        <div class="card shadow p-4" style="width: 100%; max-width: 400px;">
+            <div class="mb-3 d-flex justify-content-around">
+                <button class="btn btn-outline-primary active" id="adminLoginBtn">Admin Login</button>
+                <button class="btn btn-outline-primary" id="teacherLoginBtn">Teacher Login</button>
+                <button class="btn btn-outline-primary" id="studentLoginBtn">Student Login</button>
+            </div>
+            <h3 class="text-center mb-4" id="loginTitle">Admin Login</h3>
+            <form id="loginForm">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="username" placeholder="Enter username" required />
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" placeholder="Enter password" required />
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Login</button>
+            </form>
+            <div id="loginError" class="text-danger mt-3 d-none">Invalid username or password.</div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const adminBtn = document.getElementById('adminLoginBtn');
+        const teacherBtn = document.getElementById('teacherLoginBtn');
+        const studentBtn = document.getElementById('studentLoginBtn');
+        const loginTitle = document.getElementById('loginTitle');
+        const loginForm = document.getElementById('loginForm');
+        const loginError = document.getElementById('loginError');
+
+        let currentLoginType = 'admin';
+
+        function setActiveButton(activeBtn) {
+            [adminBtn, teacherBtn, studentBtn].forEach(btn => {
+                btn.classList.remove('active');
+            });
+            activeBtn.classList.add('active');
+        }
+
+        adminBtn.addEventListener('click', () => {
+            setActiveButton(adminBtn);
+            loginTitle.textContent = 'Admin Login';
+            currentLoginType = 'admin';
+            loginError.classList.add('d-none');
+        });
+
+        teacherBtn.addEventListener('click', () => {
+            setActiveButton(teacherBtn);
+            loginTitle.textContent = 'Teacher Login';
+            currentLoginType = 'teacher';
+            loginError.classList.add('d-none');
+        });
+
+        studentBtn.addEventListener('click', () => {
+            setActiveButton(studentBtn);
+            loginTitle.textContent = 'Student Login';
+            currentLoginType = 'student';
+            loginError.classList.add('d-none');
+        });
+
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            loginError.classList.add('d-none');
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+
+            if (currentLoginType === 'admin') {
+                // Hardcoded admin credentials
+                if (username === 'admin' && password === 'admin') {
+                    window.location.href = 'dashboard.html';
+                } else {
+                    loginError.classList.remove('d-none');
+                }
+            } else if (currentLoginType === 'teacher') {
+                // Check localStorage teachers
+                const teachers = JSON.parse(localStorage.getItem('teachers')) || [];
+                const teacher = teachers.find(t => t.username === username && t.password === password);
+                if (teacher) {
+                    alert('Teacher login successful. Redirecting to teacher dashboard.');
+                    window.location.href = 'manage_teacher.html';
+                } else {
+                    loginError.classList.remove('d-none');
+                }
+            } else if (currentLoginType === 'student') {
+                // Check localStorage students
+                const students = JSON.parse(localStorage.getItem('students')) || [];
+                const student = students.find(s => s.username === username && s.password === password);
+                if (student) {
+                    alert('Student login successful. Redirecting to student dashboard.');
+                    window.location.href = 'manage_students.html';
+                } else {
+                    loginError.classList.remove('d-none');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
